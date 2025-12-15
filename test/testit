@@ -25,8 +25,7 @@ currentpath=`pwd`
 origpath=$currentpath
 currentdir=`basename $currentpath`
 while [ $currentdir != "test" ]; do
-	if [ $currentdir = "/" ]
-	then
+	if [ $currentdir = "/" ]; then
 		echo "current directory must be in or under \"test\"."
 		exit 1
 	fi
@@ -39,18 +38,15 @@ cd ..
 ROOT=`pwd`
 cd $origpath
 
-if [ -z "$CXX" ]
-then
+if [ -z "$CXX" ]; then
 	CXX=clang++
 fi
 
-if [ -z "$CXX_LANG" ]
-then
+if [ -z "$CXX_LANG" ]; then
     CXX_LANG=c++17
 fi
 
-if expr "$CXX" : ".*g++" >/dev/null
-then
+if expr "$CXX" : ".*g++" >/dev/null; then
 	OPTIONS="$OPTIONS -pthread"
 fi
 
@@ -83,8 +79,7 @@ IMPLEMENTED_PASS=0
 afunc() {
 	fail=0
 	pass=0
-	if (ls ${TEST_PREFIX}*fail.cpp > /dev/null 2>&1)
-	then
+	if (ls ${TEST_PREFIX}*fail.cpp > /dev/null 2>&1); then
 		for FILE in $(ls ${TEST_PREFIX}*fail.cpp); do
 			if $CXX $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS -o ./$TEST_EXE > /dev/null 2>&1
 			then
@@ -97,17 +92,13 @@ afunc() {
 		done
 	fi
 
-	if (ls ${TEST_PREFIX}*pass.cpp > /dev/null 2>&1)
-	then
+	if (ls ${TEST_PREFIX}*pass.cpp > /dev/null 2>&1); then
 		for FILE in $(ls ${TEST_PREFIX}*pass.cpp); do
-            if [ "$VERBOSE" ]
-            then
+            if [ "$VERBOSE" ]; then
              	echo "Running test: " $FILE
             fi
-			if $CXX $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS) -o ./$TEST_EXE
-			then
-				if ./$TEST_EXE
-				then
+			if $CXX $OPTIONS $HEADER_INCLUDE $SOURCE_LIB $FILE $LIBS $(test $1 = no || echo $THREAD_FLAGS) -o ./$TEST_EXE; then
+				if ./$TEST_EXE; then
 					rm ./$TEST_EXE
 					pass=$(($pass+1))
 				else
@@ -124,21 +115,17 @@ afunc() {
 		done
 	fi
 
-	if [ $fail -gt 0 ]
-	then
+	if [ $fail -gt 0 ]; then
 		echo "failed $fail tests in `pwd`"
 		IMPLEMENTED_FAIL=$(($IMPLEMENTED_FAIL+1))
 	fi
-	if [ $pass -gt 0 ]
-	then
+	if [ $pass -gt 0 ]; then
 		echo "passed $pass tests in `pwd`"
-		if [ $fail -eq 0 ]
-		then
+		if [ $fail -eq 0 ]; then
 			IMPLEMENTED_PASS=$((IMPLEMENTED_PASS+1))
 		fi
 	fi
-	if [ $fail -eq 0 -a $pass -eq 0 ]
-	then
+	if [ $fail -eq 0 -a $pass -eq 0 ]; then
 		echo "not implemented:  `pwd`"
 		UNIMPLEMENTED=$(($UNIMPLEMENTED+1))
 	fi
@@ -146,10 +133,8 @@ afunc() {
 	FAIL=$(($FAIL+$fail))
 	PASS=$(($PASS+$pass))
 
-	for FILE in *
-	do
-		if [ -d "$FILE" ];
-		then
+	for FILE in *; do
+		if [ -d "$FILE" ]; then
 			cd $FILE
 			if [ $FILE = thread -o $1 = yes ]; then
 				afunc yes
